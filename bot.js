@@ -1,37 +1,65 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const fs = require('fs');
 const settings = require('./auth.json');
 const matId = '329291391320588300';
 const myId = '291710529981120524';
 const seanId = '275680282122649600';
+const nikoId = '211639443923140610';
 var heightFeet = 6;
 var heightInches = 0;
 client.on('ready',() => {
 	console.log('I\'m Online\nI\'m Online');
 });
 
+client.on('guildMemberAdd', member =>{
+	client.channels.get("617838839326703640").send("Shit, more people to bully me");
+});
+
 client.on('message', message => {
 	if (message.author === client.user) return;
-		if(message.content.startsWith("replay")){
-		var replayString = message.content.split(' ')[1];
-		var https = require('https');
-		console.log("something");
-		var options = {
-			host: 'replay.pokemonshowdown.com',
-			post: 80,
-			path: '/'+replayString+'.log',
+	
+	if(message.content.startsWith("replay")){
+			var replayString = message.content.split(' ')[1];
+			var https = require('https');
+			console.log("something");
+			var options = {
+				host: 'replay.pokemonshowdown.com',
+				post: 80,
+				path: '/'+replayString+'.log',
 
-		};
-		var req = https.get(options, function(res) {
-		  console.log(res);  console.log('STATUS: ' + res.statusCode);
-		  console.log('HEADERS: ' + JSON.stringify(res.headers));
-		  res.setEncoding('utf8');
-		  res.on('data', function (chunk) {
-			 splitLog = chunk.split("\n");
-			 sanityString = SantiseLogs(splitLog);
-			 printChunks(sanityString, message.channel);
-		  });
-				  });
+			};
+			var req = https.get(options, function(res) {
+			  console.log(res);  console.log('STATUS: ' + res.statusCode);
+			  console.log('HEADERS: ' + JSON.stringify(res.headers));
+			  res.setEncoding('utf8');
+			  res.on('data', function (chunk) {
+				 printChunk(chunk, message.channel);
+			  });
+			});
+	};
+	
+	if(message.content.startsWith("eihl")){
+			var replayString = message.content.split(' ')[1];
+			var https = require('https');
+			console.log("something");
+			var options = {
+				host: 'eihlhq.co.uk',
+				post: 80,
+				path: '/pdf/print/de-html/'+replayString,
+
+			};
+			var req = https.get(options, function(res) {
+				console.log(res.data);
+			 // console.log(res);  console.log('STATUS: ' + res.statusCode);
+			//  console.log('HEADERS: ' + JSON.stringify(res.headers));
+			  res.setEncoding('utf8');
+			  res.on('data', function (chunk) {
+				 splitLog = chunk.split("\n");
+				 sanityString = SantiseLogs(splitLog);
+				 printChunks(sanityString, message.channel);
+			  });
+			});
 	};
 
     // Our bot needs to know if it will execute a command
@@ -68,24 +96,42 @@ client.on('message', message => {
 		message.channel.send(GetRandomNewGameSpoiler());
 	}
 	
+	if(message.member.id===nikoId){
+				var d = Math.random();
+		if(d < 0.1){
+		message.channel.send("NIKO I LOVE YOU, SHOW ME YOUR BUM");
+		}
+	}
+	
 	 if(message.member.id===matId){
-		//this is where we'd create mat speak
-		var words = message.content.split(' ');
-		var returnMessage = "";
-		words.forEach(function(w){
-			w = ShortenWord(w);
-			returnMessage+=w;
-		})
-		message.channel.send(returnMessage); 
+		var d = Math.random();
+		if(d < 0.45){
+			//this is where we'd create mat speak
+			var words = message.content.split(' ');
+			var returnMessage = "";
+			words.forEach(function(w){
+				w = ShortenWord(w);
+				returnMessage+=w;
+			})
+			message.channel.send(returnMessage); 
+		}
 	 }
 	 
-	 if(message.content.includes("HEIGHT") ||message.content.includes("SMALL")||message.content.includes("SHORT")){
+	 if(message.content.includes("HEIGHT") ||message.content.includes("SMALL")||message.content.includes("SHORT")||message.content.includes("SMOL")){
 		 message.channel.send("DID SOMEONE MENTION MY HEIGHT, I'LL HAVE YOU KNOW I'M " + heightFeet +"\"" + heightInches + " TALL!");
 		 heightInches=heightInches-1;
 		 if(heightInches<0){
 			 heightFeet=heightFeet-1;
 			 heightInches=11;
 		 }
+	 }
+	 
+/*	 if(message.content.includes("EXECUTE ORDER 66") &&message.member.id === myId){
+		  message.guild.members.get(matId).kick()
+	 }*/
+	 
+	 	 if(message.content.includes("JOB") ||message.content.includes("INTERVIEW")||message.content.includes("EMPLOY")){
+		 message.channel.send("DON'T MENTION JOBS, I'M UNEMPLOYED AND POOR");
 	 }
 
 		 if(message.content.includes("BIRTHDAY")){
@@ -152,4 +198,15 @@ function printChunks(splits, channel){
 			channel.send(line);
 		}		
 	});
+}
+
+function printChunk(chunk, channel){
+	console.log(chunk);
+	fs.writeFile("/tmp/test", chunk, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+
+    console.log("The file was saved!");
+}); 
 }
